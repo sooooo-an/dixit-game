@@ -4,19 +4,15 @@ import ModalLayout from '../templates/ModalLayout'
 import Button from './ui/Button'
 import PortalModal from './ui/PortalModal'
 import Controller from './ui/Controller'
-import { GAME_RULES, Rules } from '../models/rules'
-import { useGameStore } from '../store/store'
+import { GAME_RULES, Rules, initializeRule } from '../models/rules'
 
 type Props = {
   onClose: () => void
 }
 
 export default function SettingModal({ onClose }: Props) {
-  const initialRules = useGameStore((state) => state.rules)
-  const setupRules = useGameStore((state) => state.setRules)
-  const [rules, setRules] = useState<Rules>(initialRules)
+  const [rules, setRules] = useState<Rules>(initializeRule)
   const onClickConfirm = () => {
-    setupRules(rules)
     onClose()
   }
 

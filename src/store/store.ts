@@ -1,15 +1,13 @@
 import { create } from 'zustand'
-import { DixitGame, STATUS_TYPE, Scores, initializeGame } from '../models/game'
+import { DixitGame, Rules, STATUS_TYPE, Scores, initializeGame } from '../models/game'
 import { uuid } from '../utils/uuid'
 import createSelectors from './selector'
 import { GUESS_TYPE, Votes } from '../models/vote'
-import { Rules } from '../models/rules'
 
 type State = DixitGame
 
 type Action = {
-  setRules: (rules: Rules) => void
-  startGame: (playerNames: string[]) => void
+  startGame: (playerNames: string[], rules: Rules) => void
   nextRound: (votes: Votes) => void
   updateRound: (roundIdx: number, scores: Scores) => void
 }
@@ -18,14 +16,12 @@ type GameState = State & Action
 
 const store = create<GameState>()((set, get) => ({
   ...initializeGame,
-  setRules: (rules: Rules) =>
-    set({
-      rules,
-    }),
-  startGame: (playerNames: string[]) => {
+  startGame: (playerNames: string[], rules: Rules) => {
     const players = playerNames.map((name) => ({ name, id: uuid() }))
+
     set({
       players,
+      rules,
       currentRound: 0,
       status: STATUS_TYPE.PROGRESS,
       totals: players.map(() => 0),
@@ -86,4 +82,4 @@ const store = create<GameState>()((set, get) => ({
   },
 }))
 
-export const useGameStore = createSelectors(store)
+export const useStore = createSelectors(store)
