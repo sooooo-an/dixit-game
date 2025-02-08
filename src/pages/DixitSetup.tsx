@@ -6,10 +6,12 @@ import { MAXIMUM_PLAYERS, MINIMUM_PLAYERS } from '../models/player'
 import PlayerInputs from '../components/PlayerInputs'
 import Button from '../components/ui/Button'
 import SettingModal from '../components/SettingModal'
+import { useGameStore } from '../store/store'
 
 export default function DixitSetup() {
   const [names, setNames] = useState<string[]>(initialize)
   const [open, setOpen] = useState(false)
+  const startGame = useGameStore((state) => state.startGame)
 
   const updateInputCount = (type: CounterActionType) => {
     const current = type === COUNTER_ACTION.INCREASE ? [...names, ''] : names.slice(0, -1)
@@ -22,7 +24,7 @@ export default function DixitSetup() {
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // initializeDixitGame(names, INITIAL_SCORING_RULE)
+    startGame(names)
   }
 
   const toggleSettingModal = (open: boolean) => {
