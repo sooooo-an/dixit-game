@@ -1,7 +1,7 @@
 import { Player } from './player'
 import { Votes } from './vote'
 
-const STATUS_TYPE = {
+export const STATUS_TYPE = {
   PENDING: 'pending',
   PROGRESS: 'progress',
   COMPLETED: 'completed',
@@ -9,7 +9,7 @@ const STATUS_TYPE = {
 
 type Status = (typeof STATUS_TYPE)[keyof typeof STATUS_TYPE]
 
-type Scores = {
+export type Scores = {
   [playerId: string]: number
 }
 
@@ -20,7 +20,7 @@ type History = {
   votes: Votes
 }
 
-type Rules = {
+export type Rules = {
   partialPoints: number
   fullPoints: number
   bonusPerVote: number
@@ -33,6 +33,22 @@ export type DixitGame = {
   currentRound: number
   history: History[]
   rules: Rules
-  winner: Player
+  winner?: Player
   status: Status
+}
+
+export const initializeRule: Rules = {
+  partialPoints: 3,
+  fullPoints: 2,
+  bonusPerVote: 1,
+  winScore: 30,
+}
+
+export const initializeGame: DixitGame = {
+  players: [],
+  totals: [],
+  currentRound: 0,
+  history: [],
+  rules: initializeRule,
+  status: STATUS_TYPE.PENDING,
 }
