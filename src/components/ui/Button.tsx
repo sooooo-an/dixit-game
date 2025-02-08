@@ -2,9 +2,9 @@ import { BUTTON_TYPE, BUTTON_VARIANT, ButtonTypeProps, ButtonVariant } from '../
 
 type Props = {
   variant: ButtonVariant
-  disabled: boolean
+  disabled?: boolean
   children: React.ReactNode
-  className: string
+  className?: string
 } & ButtonTypeProps
 
 export default function Button(props: Props) {
@@ -24,4 +24,4 @@ export default function Button(props: Props) {
 
 const CIRCLE_STYLE =
   'rounded-full bg-amber-600/20 p-2 text-3xl text-white shadow hover:bg-amber-600/30'
-const NORMAL_STYLE = 'w-full bg-amber-200/30'
+const NORMAL_STYLE = 'w-full bg-amber-200/30 py-4'

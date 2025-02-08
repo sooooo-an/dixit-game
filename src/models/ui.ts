@@ -17,7 +17,7 @@ export const BUTTON_VARIANT = {
 
 type ButtonType = {
   type: typeof BUTTON_TYPE.BUTTON
-  onClick: () => {}
+  onClick: () => void
 }
 
 type SubmitType = {

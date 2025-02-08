@@ -1,4 +1,5 @@
 import { Player } from './player'
+import { Rules, initializeRule } from './rules'
 import { Votes } from './vote'
 
 export const STATUS_TYPE = {
@@ -20,13 +21,6 @@ type History = {
   votes: Votes
 }
 
-export type Rules = {
-  partialPoints: number
-  fullPoints: number
-  bonusPerVote: number
-  winScore: number
-}
-
 export type DixitGame = {
   players: Player[]
   totals: number[]
@@ -35,13 +29,6 @@ export type DixitGame = {
   rules: Rules
   winner?: Player
   status: Status
-}
-
-export const initializeRule: Rules = {
-  partialPoints: 3,
-  fullPoints: 2,
-  bonusPerVote: 1,
-  winScore: 30,
 }
 
 export const initializeGame: DixitGame = {
