@@ -1,1 +1,8 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-primary: rgba(253, 230, 138, 0.3);
+  --color-secondary: rgba(255, 255, 255, 0.1);
+  --color-line: rgba(251, 191, 36, 0.4);
+  --field-bg: rgba(255, 255, 255, 0.1);
+}
