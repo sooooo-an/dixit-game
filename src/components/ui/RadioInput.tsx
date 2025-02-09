@@ -6,7 +6,7 @@ type Props = {
   checked: boolean
   name: string
   disabled?: boolean
-  handleChange: (name: string, value: string) => void
+  handleChange: (value: string, name: string) => void
   id: string
 }
 
@@ -21,11 +21,11 @@ export default function RadioInput({
 }: Props) {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    handleChange(name, value)
+    handleChange(value, name)
   }
 
   return (
-    <label htmlFor={id}>
+    <label htmlFor={id} className="py-1 text-lg">
       <input
         type="radio"
         value={value}
@@ -35,7 +35,7 @@ export default function RadioInput({
         onChange={onChange}
         id={id}
       />
-      <span>{label}</span>
+      <span className="">{label}</span>
     </label>
   )
 }
