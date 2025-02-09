@@ -15,7 +15,7 @@ export default function PlayerVoteStatus({
   onVotedForChange,
   playerId,
 }: Props) {
-  const IS_SHOW_VOTE = vote.guess === GUESS_TYPE.INCORRECT
+  const IS_SHOW_VOTE = vote?.guess === GUESS_TYPE.INCORRECT
 
   const handleGuess = (guess: GuessType) => {
     onGuessChange(playerId, guess)

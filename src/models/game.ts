@@ -1,6 +1,5 @@
 import { Player } from './player'
 import { Rules, initializeRule } from './rules'
-import { Votes } from './vote'
 
 export const STATUS_TYPE = {
   PENDING: 'pending',
@@ -19,7 +18,6 @@ type History = {
   storyteller: Player
   // scores: number[]
   scores: Scores
-  votes: Votes
 }
 
 export type DixitGame = {
