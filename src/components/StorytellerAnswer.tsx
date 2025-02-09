@@ -16,7 +16,7 @@ export default function StorytellerAnswer({ value, setValue, uniqueId }: Props) 
   return (
     <>
       <span>정답 여부</span>
-      <div className="flex justify-between gap-2 px-2">
+      <div className="flex justify-around gap-2 px-2">
         <RadioInput
           label="정답"
           value="correct"

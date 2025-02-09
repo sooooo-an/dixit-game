@@ -7,11 +7,13 @@ import PlayerInputs from '../components/PlayerInputs'
 import Button from '../components/ui/Button'
 import SettingModal from '../components/SettingModal'
 import { useGameStore } from '../store/store'
+import { uuid } from '../utils/uuid'
 
 export default function DixitSetup() {
   const [names, setNames] = useState<string[]>(initialize)
   const [open, setOpen] = useState(false)
   const startGame = useGameStore((state) => state.startGame)
+  const disabled = names.some((name) => name.trim() === '')
 
   const updateInputCount = (type: CounterActionType) => {
     const current = type === COUNTER_ACTION.INCREASE ? [...names, ''] : names.slice(0, -1)
@@ -24,7 +26,8 @@ export default function DixitSetup() {
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    startGame(names)
+    const players = names.map((name) => ({ id: uuid(), name }))
+    startGame(players)
   }
 
   const toggleSettingModal = (open: boolean) => {
@@ -40,7 +43,7 @@ export default function DixitSetup() {
         max={MAXIMUM_PLAYERS}
       />
       <PlayerInputs inputs={names} updateInputs={updateName} />
-      <Button type={BUTTON_TYPE.SUBMIT} variant={BUTTON_VARIANT.NORMAL}>
+      <Button disabled={disabled} type={BUTTON_TYPE.SUBMIT} variant={BUTTON_VARIANT.NORMAL}>
         Start Game!
       </Button>
       <Button

@@ -1,17 +1,16 @@
 import { create } from 'zustand'
 import { DixitGame, STATUS_TYPE, Scores, initializeGame } from '../models/game'
-import { uuid } from '../utils/uuid'
 import createSelectors from './selector'
 import { GUESS_TYPE, Votes } from '../models/vote'
-import { Rules } from '../models/rules'
+import { GAME_RULES, Rules } from '../models/rules'
+import { Player } from '../models/player'
 
 type State = DixitGame
 
 type Action = {
   setRules: (rules: Rules) => void
-  startGame: (playerNames: string[]) => void
+  startGame: (players: Player[]) => void
   nextRound: (votes: Votes) => void
-  updateRound: (roundIdx: number, scores: Scores) => void
 }
 
 type GameState = State & Action
@@ -22,70 +21,61 @@ const store = create<GameState>()((set, get) => ({
     set({
       rules,
     }),
-  startGame: (playerNames: string[]) => {
-    const players = playerNames.map((name) => ({ name, id: uuid() }))
+  startGame: (players: Player[]) => {
     set({
       players,
       currentRound: 0,
       currentStoryteller: players[0],
       status: STATUS_TYPE.PROGRESS,
-      totals: players.map(() => 0),
+      totals: new Array(players.length).fill(0),
     })
   },
   nextRound: (votes: Votes) => {
     const { currentRound, players, history, totals, rules } = get()
     const storyteller = players[currentRound % players.length]
-
-    const isFull = new Set(Object.values(votes).map(({ guess }) => guess)).size === 1
-    const newScore = Object.entries(votes).reduce((acc: Scores, [playerId, vote]) => {
-      const { guess } = vote
-      const calculateScore = () => {
-        if (isFull) {
-          return storyteller.id === playerId ? 0 : rules.fullPoints
-        } else {
-          return storyteller.id === playerId
-            ? rules.partialPoints
-            : guess === GUESS_TYPE.CORRECT
-              ? rules.partialPoints
-              : 0
-        }
-      }
-
-      return {
-        ...acc,
-        [playerId]: calculateScore(),
-        ...(guess === GUESS_TYPE.INCORRECT ? { [vote.votedFor]: acc[vote.votedFor] + 1 } : {}),
-      }
-    }, {})
+    const newScore = nextRoundScoreCalculator(votes, players, storyteller.id, rules)
+    const newTotals = totals.map((score, idx) => score + newScore[players[idx].id])
+    const isGameOver = newTotals.some((score) => score >= rules.winScore)
 
     set({
       currentRound: currentRound + 1,
-      currentStoryteller: players[currentRound + (1 % players.length)],
-      history: [...history, { round: currentRound + 1, storyteller, votes, scores: newScore }],
-      totals: players.map(({ id }, idx) => totals[idx] + newScore[id]),
-    })
-  },
-
-  updateRound: (roundIdx: number, scores: Scores) => {
-    const { history, players, totals } = get()
-    if (!history[roundIdx]) return
-
-    const newHistory = history.map((prevHistory, idx) => {
-      return roundIdx === idx
-        ? { ...prevHistory, scores: { ...prevHistory.scores, ...scores } }
-        : prevHistory
-    })
-
-    const updatedTotals = players.map(({ id }, idx) => {
-      const prevScore = history[roundIdx]?.scores[id] || 0
-      return id in scores ? totals[idx] - prevScore + scores[id] : totals[idx]
-    })
-
-    set({
-      history: newHistory,
-      totals: updatedTotals,
+      currentStoryteller: players[(currentRound + 1) % players.length],
+      history: [...history, { round: currentRound + 1, storyteller, scores: newScore }],
+      totals: newTotals,
+      status: isGameOver ? STATUS_TYPE.COMPLETED : STATUS_TYPE.PROGRESS,
     })
   },
 }))
 
 export const useGameStore = createSelectors(store)
+
+const nextRoundScoreCalculator = (
+  votes: Votes,
+  players: Player[],
+  storytellerId: string,
+  rules: Rules
+): Scores => {
+  const scores: Scores = players.reduce((acc, { id }) => ({ ...acc, [id]: 0 }), {})
+  const isFull = new Set(Object.values(votes).map(({ guess }) => guess)).size === 1
+  const { fullPoints, partialPoints, bonusPerVote } = rules
+
+  Object.entries(votes).forEach(([playerId, vote]) => {
+    if (playerId !== storytellerId) {
+      scores[playerId] += isFull
+        ? fullPoints
+        : vote.guess === GUESS_TYPE.CORRECT
+          ? partialPoints
+          : 0
+    }
+
+    if (!isFull && vote.guess === GUESS_TYPE.CORRECT) {
+      scores[storytellerId] = partialPoints
+    }
+
+    if (vote.guess === GUESS_TYPE.INCORRECT && vote.votedFor in scores) {
+      scores[vote.votedFor] += bonusPerVote
+    }
+  })
+
+  return scores
+}
