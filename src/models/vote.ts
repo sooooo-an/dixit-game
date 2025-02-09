@@ -3,6 +3,8 @@ export const GUESS_TYPE = {
   INCORRECT: 'incorrect',
 } as const
 
+export type GuessType = (typeof GUESS_TYPE)[keyof typeof GUESS_TYPE]
+
 export type Votes = {
   [playerId: string]: Vote
 }
