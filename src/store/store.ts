@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { DixitGame, STATUS_TYPE, Scores, initializeGame } from '../models/game'
 import createSelectors from './selector'
 import { GUESS_TYPE, Votes } from '../models/vote'
-import { GAME_RULES, Rules } from '../models/rules'
+import { Rules } from '../models/rules'
 import { Player } from '../models/player'
 
 type State = DixitGame
