@@ -27,6 +27,7 @@ const store = create<GameState>()((set, get) => ({
     set({
       players,
       currentRound: 0,
+      currentStoryteller: players[0],
       status: STATUS_TYPE.PROGRESS,
       totals: players.map(() => 0),
     })
@@ -59,6 +60,7 @@ const store = create<GameState>()((set, get) => ({
 
     set({
       currentRound: currentRound + 1,
+      currentStoryteller: players[currentRound + (1 % players.length)],
       history: [...history, { round: currentRound + 1, storyteller, votes, scores: newScore }],
       totals: players.map(({ id }, idx) => totals[idx] + newScore[id]),
     })

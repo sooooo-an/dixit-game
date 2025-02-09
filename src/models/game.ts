@@ -17,6 +17,7 @@ export type Scores = {
 type History = {
   round: number
   storyteller: Player
+  // scores: number[]
   scores: Scores
   votes: Votes
 }
@@ -25,6 +26,7 @@ export type DixitGame = {
   players: Player[]
   totals: number[]
   currentRound: number
+  currentStoryteller: Player | null
   history: History[]
   rules: Rules
   winner?: Player
@@ -38,4 +40,5 @@ export const initializeGame: DixitGame = {
   history: [],
   rules: initializeRule,
   status: STATUS_TYPE.PENDING,
+  currentStoryteller: null,
 }
